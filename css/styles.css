@@ -1,0 +1,1574 @@
+/**
+ * Estilos principales para el juego "Aventura en el Reino de JS"
+ *
+ * @file styles.css
+ * @description Estilos CSS para la interfaz del juego con tema medieval-fantástico
+ * @version 1.0.0
+ * @author Roberto Borrallo Álvarez
+ *
+ * @section Variables CSS
+ * Define las variables de color y tipografía utilizadas en todo el juego
+ *
+ * @section Estructura principal
+ * Estilos para la estructura base y contenedores del juego
+ *
+ * @section Componentes
+ * Estilos para componentes específicos: tarjetas, botones, barras de vida, etc.
+ *
+ * @section Responsive
+ * Media queries para diferentes tamaños de pantalla
+ */
+
+/* ========== RESET Y BASE ========== */
+/**
+ * Reset y estilos base para todos los elementos
+ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/**
+ * Variables CSS globales para colores y tipografía
+ */
+:root {
+    --color-primary: #8b0000;
+    --color-primary-dark: #5a0000;
+    --color-secondary: #333333;
+    --color-secondary-dark: #1a1a1a;
+    --color-accent: #daa520;
+    --color-accent-dark: #b8860b;
+    --color-text: #f5f5f5;
+    --color-text-dim: #b0b0b0;
+    --color-border: #444444;
+    --color-success: #28a745;
+    --color-danger: #dc3545;
+    --color-warning: #ffc107;
+    --color-info: #17a2b8;
+
+    --comun: #808080;
+    --rara: #1e90ff;
+    --epica: #9370db;
+    --legendaria: #ffd700;
+}
+
+/**
+ * Estilos base del cuerpo del documento
+ */
+body {
+    font-family: 'Cinzel', 'Georgia', serif;
+    background:
+        linear-gradient(135deg,
+            #0a0a0a 0%,
+            #1a0a0a 25%,
+            #2a0a0a 50%,
+            #1a0a0a 75%,
+            #0a0a0a 100%),
+        repeating-linear-gradient(45deg,
+            transparent,
+            transparent 2px,
+            rgba(139, 0, 0, 0.05) 2px,
+            rgba(139, 0, 0, 0.05) 4px);
+    background-attachment: fixed;
+    color: var(--color-text);
+    min-height: 100vh;
+    overflow: hidden;
+    position: relative;
+}
+
+/**
+ * Overlay de fondo decorativo
+ */
+.background-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background:
+        radial-gradient(circle at 20% 50%, rgba(139, 0, 0, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(218, 165, 32, 0.05) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: -1;
+}
+
+/* ========== ESTRUCTURA PRINCIPAL ========== */
+/**
+ * Contenedor principal de cada escena
+ */
+.scene-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/**
+ * Cabecera de cada escena
+ */
+.scene-header {
+    text-align: center;
+    padding: 10px 0;
+    border-bottom: 2px solid var(--color-border);
+    margin-bottom: 20px;
+    flex-shrink: 0;
+}
+
+/**
+ * Títulos principales de las escenas
+ */
+.scene-header h1,
+.scene-header h2 {
+    color: var(--color-accent);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8),
+        0 0 20px rgba(139, 0, 0, 0.5);
+    margin-bottom: 5px;
+    font-size: 2rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+/**
+ * Subtítulos de las escenas
+ */
+.subtitle {
+    color: var(--color-text-dim);
+    font-style: italic;
+    font-size: 1rem;
+    letter-spacing: 1px;
+}
+
+/**
+ * Contenido principal de cada escena
+ */
+.scene-content {
+    flex: 1;
+    padding: 20px;
+    background: rgba(26, 26, 26, 0.7);
+    border-radius: 10px;
+    border: 1px solid var(--color-border);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    margin: 10px 0;
+    overflow: hidden;
+    /* Por defecto, sin scroll */
+}
+
+/**
+ * Escenas que necesitan scroll: mercado y final
+ */
+#escena-mercado .scene-content,
+#escena-final .scene-content {
+    overflow-y: auto;
+}
+
+/**
+ * Pie de cada escena (donde van los botones principales)
+ */
+.scene-footer {
+    text-align: center;
+    padding: 10px 0;
+    border-top: 2px solid var(--color-border);
+    margin-top: 20px;
+    flex-shrink: 0;
+}
+
+/* ========== ESCENAS ========== */
+/**
+ * Estilo base para todas las escenas (inicialmente ocultas)
+ */
+.escena {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+/**
+ * Escena activa (visible)
+ */
+.escena.activa {
+    display: block;
+    animation: fadeIn 0.5s ease;
+}
+
+/**
+ * Animación de entrada para las escenas
+ */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* ========== MERCADO ========== */
+/**
+ * Contenido específico para la escena del mercado
+ */
+.mercado-content {
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+/**
+ * Grid principal del mercado
+ */
+.market-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 30px;
+    height: 100%;
+    min-height: 0;
+    /* Para que el grid no desborde */
+}
+
+/**
+ * Sección de productos disponibles
+ */
+.productos-section {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+/**
+ * Título de la sección de productos
+ */
+.productos-section h3 {
+    color: var(--color-accent);
+    margin-bottom: 15px;
+    text-align: center;
+    font-size: 1.3rem;
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: 10px;
+    flex-shrink: 0;
+}
+
+/**
+ * Lista de productos (grid)
+ */
+.lista-productos {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    overflow-y: auto;
+    padding: 10px;
+    flex: 1;
+}
+
+/* ========== INVENTARIO ========== */
+/**
+ * Sección del inventario/cesta de compra
+ */
+.cesta-section {
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    border: 1px solid var(--color-border);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+/**
+ * Cabecera del inventario con título y contador
+ */
+.inventario-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--color-border);
+    flex-shrink: 0;
+}
+
+/**
+ * Contenedor de la cesta de compra (grid de objetos)
+ */
+.cesta-compra {
+    flex: 1;
+    overflow-y: auto;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 5px;
+    border: 1px solid var(--color-border);
+    min-height: 0;
+}
+
+/* ========== PANTALLA FINAL ========== */
+/**
+ * Contenido específico para la escena final
+ */
+.final-content {
+    max-width: 800px;
+    margin: 0 auto;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/**
+ * Grid del resultado final (puntuación y rango)
+ */
+.resultado-final {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    margin-bottom: 30px;
+    flex-shrink: 0;
+}
+
+/**
+ * Sección de resumen de batallas
+ */
+.resumen-batallas {
+    background: rgba(30, 30, 30, 0.9);
+    border-radius: 10px;
+    padding: 20px;
+    border: 2px solid var(--color-border);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/**
+ * Título del resumen de batallas
+ */
+.resumen-batallas h3 {
+    color: var(--color-accent);
+    margin-bottom: 15px;
+    text-align: center;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+}
+
+/**
+ * Lista de resumen de combates
+ */
+.resumen-combates {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    overflow-y: auto;
+    flex: 1;
+    padding: 5px;
+}
+
+/* ========== BOTONES ========== */
+/**
+ * Estilo base para todos los botones
+ */
+.btn {
+    padding: 12px 30px;
+    border: none;
+    border-radius: 5px;
+    font-family: inherit;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-width: 200px;
+}
+
+/**
+ * Iconos dentro de botones
+ */
+.btn i {
+    font-size: 1.2em;
+}
+
+/**
+ * Botón primario (acción principal)
+ */
+.btn-primary {
+    background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+    color: var(--color-text);
+    border: 1px solid var(--color-accent);
+    box-shadow: 0 4px 10px rgba(139, 0, 0, 0.4);
+}
+
+/**
+ * Efecto hover para botón primario
+ */
+.btn-primary:hover {
+    background: linear-gradient(135deg, var(--color-primary-dark), var(--color-primary));
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(139, 0, 0, 0.6);
+}
+
+/**
+ * Botón secundario (acción alternativa)
+ */
+.btn-secondary {
+    background: linear-gradient(135deg, var(--color-secondary), var(--color-secondary-dark));
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+}
+
+/**
+ * Efecto hover para botón secundario
+ */
+.btn-secondary:hover {
+    background: linear-gradient(135deg, var(--color-secondary-dark), var(--color-secondary));
+    transform: translateY(-2px);
+}
+
+/**
+ * Botón de peligro (acción crítica)
+ */
+.btn-danger {
+    background: linear-gradient(135deg, #dc3545, #a71d2a);
+    color: var(--color-text);
+    border: 1px solid #ff6b6b;
+}
+
+/**
+ * Efecto hover para botón de peligro
+ */
+.btn-danger:hover {
+    background: linear-gradient(135deg, #a71d2a, #dc3545);
+    transform: translateY(-2px);
+}
+
+/**
+ * Botón de compra en el mercado
+ */
+.btn-comprar {
+    background: linear-gradient(135deg, #28a745, #1e7e34);
+    color: white;
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    min-width: auto;
+}
+
+/**
+ * Botón para retirar producto del carrito
+ */
+.btn-retirar {
+    background: linear-gradient(135deg, #dc3545, #a71d2a);
+    color: white;
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    min-width: auto;
+}
+
+/* ========== TARJETA DEL JUGADOR ========== */
+/**
+ * Tarjeta que muestra la información del jugador
+ */
+.tarjeta-jugador {
+    background: rgba(40, 40, 40, 0.9);
+    border-radius: 10px;
+    padding: 30px;
+    margin: 0 auto;
+    max-width: 500px;
+    border: 2px solid var(--color-border);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.7);
+    text-align: center;
+}
+
+/**
+ * Variante actualizada de la tarjeta del jugador
+ */
+.tarjeta-jugador.actualizada {
+    border-color: var(--color-accent);
+    box-shadow: 0 5px 20px rgba(218, 165, 32, 0.3);
+}
+
+/**
+ * Contenedor del avatar del jugador
+ */
+.avatar-container {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 20px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid var(--color-accent);
+    background: rgba(0, 0, 0, 0.5);
+}
+
+/**
+ * Imagen del avatar dentro del contenedor
+ */
+.avatar-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/**
+ * Nombre del jugador en la tarjeta
+ */
+.tarjeta-jugador h2 {
+    color: var(--color-accent);
+    margin-bottom: 20px;
+    font-size: 1.8rem;
+}
+
+/**
+ * Grid de estadísticas del jugador
+ */
+.estadisticas {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin-top: 20px;
+}
+
+/**
+ * Estilo para cada estadística individual
+ */
+.stat {
+    background: rgba(0, 0, 0, 0.5);
+    padding: 15px;
+    border-radius: 5px;
+    border-left: 4px solid var(--color-primary);
+    text-align: left;
+}
+
+/**
+ * Etiqueta de la estadística
+ */
+.stat-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--color-text-dim);
+    font-size: 0.9rem;
+    margin-bottom: 5px;
+}
+
+/**
+ * Valor de la estadística
+ */
+.stat-value {
+    font-weight: bold;
+    color: var(--color-text);
+    font-size: 1.3em;
+    display: block;
+}
+
+/* ========== PRODUCTOS ========== */
+/**
+ * Tarjeta de producto individual
+ */
+.producto {
+    background: rgba(30, 30, 30, 0.9);
+    border-radius: 8px;
+    padding: 15px;
+    border: 1px solid var(--color-border);
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/**
+ * Efecto hover para productos
+ */
+.producto:hover {
+    border-color: var(--color-accent);
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+}
+
+/**
+ * Producto seleccionado (añadido al carrito)
+ */
+.producto.seleccionado {
+    border-color: var(--color-success);
+    background: rgba(40, 167, 69, 0.1);
+}
+
+/**
+ * Contenedor de la imagen del producto
+ */
+.producto-imagen-container {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 5px;
+    border: 1px solid var(--color-border);
+}
+
+/**
+ * Imagen dentro del contenedor
+ */
+.producto-imagen-container img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+/**
+ * Nombre del producto
+ */
+.producto h4 {
+    color: var(--color-text);
+    font-size: 1.1rem;
+    text-align: center;
+    margin: 5px 0;
+}
+
+/**
+ * Texto del bonus del producto
+ */
+.producto-bonus {
+    color: var(--color-success);
+    font-weight: bold;
+    text-align: center;
+    font-size: 1rem;
+}
+
+/**
+ * Precio del producto
+ */
+.producto-precio {
+    color: var(--color-accent);
+    font-weight: bold;
+    font-size: 1.2rem;
+    text-align: center;
+    margin: 10px 0;
+}
+
+/**
+ * Etiqueta de rareza del producto
+ */
+.rareza {
+    font-weight: bold;
+    text-align: center;
+    font-size: 0.9rem;
+    padding: 3px 8px;
+    border-radius: 3px;
+    text-transform: uppercase;
+}
+
+/**
+ * Rareza común (gris)
+ */
+.rareza.comun {
+    background: rgba(128, 128, 128, 0.2);
+    color: var(--comun);
+    border: 1px solid var(--comun);
+}
+
+/**
+ * Rareza rara (azul)
+ */
+.rareza.rara {
+    background: rgba(30, 144, 255, 0.2);
+    color: var(--rara);
+    border: 1px solid var(--rara);
+}
+
+/**
+ * Rareza épica (púrpura)
+ */
+.rareza.epica {
+    background: rgba(147, 112, 219, 0.2);
+    color: var(--epica);
+    border: 1px solid var(--epica);
+}
+
+/**
+ * Rareza legendaria (dorado)
+ */
+.rareza.legendaria {
+    background: rgba(255, 215, 0, 0.2);
+    color: var(--legendaria);
+    border: 1px solid var(--legendaria);
+}
+
+/**
+ * Tipo de producto (texto pequeño)
+ */
+.producto small {
+    color: var(--color-text-dim);
+    text-align: center;
+    display: block;
+    font-size: 0.85rem;
+}
+
+/* ========== INVENTARIO ========== */
+/**
+ * Estado vacío de la cesta
+ */
+.cesta-vacia {
+    grid-column: 1 / -1;
+    text-align: center;
+    color: var(--color-text-dim);
+    padding: 40px 20px;
+}
+
+/**
+ * Icono en cesta vacía
+ */
+.cesta-vacia i {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    opacity: 0.5;
+}
+
+/**
+ * Item individual en el inventario
+ */
+.item-inventario {
+    width: 70px;
+    height: 70px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+/**
+ * Item de rareza común
+ */
+.item-inventario.comun {
+    border: 2px solid var(--comun);
+    background: rgba(128, 128, 128, 0.2);
+}
+
+/**
+ * Item de rareza rara
+ */
+.item-inventario.rara {
+    border: 2px solid var(--rara);
+    background: rgba(30, 144, 255, 0.2);
+}
+
+/**
+ * Item de rareza épica
+ */
+.item-inventario.epica {
+    border: 2px solid var(--epica);
+    background: rgba(147, 112, 219, 0.2);
+}
+
+/**
+ * Item de rareza legendaria
+ */
+.item-inventario.legendaria {
+    border: 2px solid var(--legendaria);
+    background: rgba(255, 215, 0, 0.2);
+}
+
+/**
+ * Imagen dentro del item del inventario
+ */
+.item-inventario img {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+}
+
+/**
+ * Resumen de estadísticas en el mercado
+ */
+.stats-summary {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid var(--color-border);
+    flex-shrink: 0;
+}
+
+/**
+ * Item individual en el resumen de estadísticas
+ */
+.stat-summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    color: var(--color-text-dim);
+}
+
+/**
+ * Valor en el resumen de estadísticas
+ */
+.stat-summary strong {
+    color: var(--color-text);
+    font-size: 1.1rem;
+}
+
+/* ========== ENEMIGOS ========== */
+/**
+ * Lista de enemigos (grid)
+ */
+.lista-enemigos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 25px;
+    padding: 20px;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+/**
+ * Tarjeta de enemigo individual
+ */
+.enemigo {
+    background: rgba(30, 30, 30, 0.9);
+    border-radius: 10px;
+    padding: 25px;
+    text-align: center;
+    border: 2px solid var(--color-danger);
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+/**
+ * Efecto hover para enemigos
+ */
+.enemigo:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(220, 53, 69, 0.3);
+}
+
+/**
+ * Estilo especial para jefes
+ */
+.enemigo.jefe {
+    border-color: var(--color-accent);
+    background: linear-gradient(135deg,
+            rgba(40, 40, 40, 0.9) 0%,
+            rgba(60, 40, 20, 0.9) 100%);
+}
+
+/**
+ * Efecto hover para jefes
+ */
+.enemigo.jefe:hover {
+    box-shadow: 0 10px 20px rgba(218, 165, 32, 0.4);
+}
+
+/**
+ * Imagen del enemigo
+ */
+.enemigo img {
+    width: 100px;
+    height: 100px;
+    object-fit: contain;
+    margin-bottom: 15px;
+    filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.5));
+}
+
+/**
+ * Nombre del enemigo
+ */
+.enemigo h3 {
+    color: var(--color-text);
+    font-size: 1.4rem;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+/**
+ * Estadísticas del enemigo
+ */
+.estadisticas-enemigo {
+    text-align: left;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 15px;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+
+/**
+ * Párrafo individual en estadísticas del enemigo
+ */
+.estadisticas-enemigo p {
+    margin-bottom: 8px;
+    color: var(--color-text-dim);
+}
+
+/**
+ * Texto fuerte en estadísticas del enemigo
+ */
+.estadisticas-enemigo strong {
+    color: var(--color-text);
+}
+
+/**
+ * Etiqueta especial para jefes
+ */
+.jefe-label {
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--color-accent);
+    color: #000;
+    padding: 5px 15px;
+    border-radius: 15px;
+    font-weight: bold;
+    font-size: 0.9rem;
+    white-space: nowrap;
+}
+
+/* ========== BATALLAS ========== */
+/**
+ * Contenido específico para la escena de batallas
+ */
+.battle-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+/**
+ * Contenedor de información de batalla
+ */
+.battle-info {
+    width: 100%;
+    max-width: 900px;
+}
+
+/**
+ * Grid de combatientes (jugador vs enemigo)
+ */
+.combatientes {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 40px;
+    align-items: center;
+    margin-bottom: 40px;
+}
+
+/**
+ * Tarjeta de combatiente individual
+ */
+.combatiente {
+    background: rgba(30, 30, 30, 0.9);
+    border-radius: 10px;
+    padding: 25px;
+    text-align: center;
+    border: 3px solid;
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+/**
+ * Combatiente jugador (azul)
+ */
+.jugador-combatiente {
+    border-color: var(--color-info);
+    /*animation: slideInFromLeft 0.8s ease-out;*/
+}
+
+/**
+ * Combatiente enemigo (rojo)
+ */
+.enemigo-combatiente {
+    border-color: var(--color-danger);
+    /*animation: slideInFromRight 0.8s ease-out;*/
+}
+
+/**
+ * Cabecera del combatiente (avatar y nombre)
+ */
+.combatiente-header {
+    margin-bottom: 20px;
+}
+
+/**
+ * Avatar del combatiente
+ */
+.combatiente img {
+    width: 100px;
+    height: 100px;
+    object-fit: contain;
+    margin-bottom: 15px;
+    border-radius: 50%;
+    border: 3px solid currentColor;
+    padding: 5px;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+/**
+ * Nombre del combatiente
+ */
+.combatiente h3 {
+    color: var(--color-text);
+    font-size: 1.5rem;
+}
+
+/**
+ * Contenedor del texto "VS"
+ */
+.vs-container {
+    text-align: center;
+}
+
+/**
+ * Texto "VS" entre combatientes
+ */
+.vs {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: var(--color-accent);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8),
+        0 0 20px rgba(139, 0, 0, 0.7);
+    background: rgba(0, 0, 0, 0.7);
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid var(--color-accent);
+}
+
+/**
+ * Contenedor de la barra de vida
+ */
+.vida-container {
+    margin-top: 20px;
+}
+
+/**
+ * Etiqueta "Vida" sobre la barra
+ */
+.vida-label {
+    color: var(--color-text-dim);
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+}
+
+/**
+ * Barra de vida contenedora
+ */
+.vida-bar {
+    width: 100%;
+    height: 20px;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 8px;
+    border: 1px solid var(--color-border);
+}
+
+/**
+ * Relleno de la barra de vida (parte coloreada)
+ */
+.vida-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #2ecc71, #27ae60);
+    width: 100%;
+    transition: width 0.5s ease;
+}
+
+/**
+ * Texto numérico de la vida
+ */
+.vida-texto {
+    color: var(--color-text);
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+/**
+ * Animación de entrada desde la izquierda
+ */
+@keyframes slideInFromLeft {
+    from {
+        transform: translateX(-100px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/**
+ * Animación de entrada desde la derecha
+ */
+@keyframes slideInFromRight {
+    from {
+        transform: translateX(100px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* ========== CARTEL DE VICTORIA/DERROTA CON LA MISMA ANCHURA PERO MENOS ALTURA ========== */
+/**
+ * Cartel que muestra el resultado de la batalla
+ */
+.resultado-batalla {
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 10px;
+    padding: 5px 10px;
+    /* Menos padding vertical, mismo horizontal */
+    text-align: center;
+    border: 2px solid transparent;
+    animation: pulse 2s infinite;
+    width: 100%;
+    /* Misma anchura */
+    margin: 0 auto;
+    position: relative;
+    z-index: 10;
+    min-height: auto;
+    /* Eliminamos altura mínima */
+}
+
+/**
+ * Variante de victoria (verde)
+ */
+.resultado-batalla.victoria {
+    border-color: var(--color-success);
+    background: linear-gradient(135deg,
+            rgba(40, 167, 69, 0.2),
+            rgba(0, 0, 0, 0.7));
+}
+
+/**
+ * Variante de derrota (rojo)
+ */
+.resultado-batalla.derrota {
+    border-color: var(--color-danger);
+    background: linear-gradient(135deg,
+            rgba(220, 53, 69, 0.2),
+            rgba(0, 0, 0, 0.7));
+}
+
+/**
+ * Título del resultado de victoria/derrota
+ */
+.victoria-texto h3,
+.derrota-texto h3 {
+    font-size: 1.8rem;
+    /* Reducido de 2rem */
+    margin-bottom: 8px;
+    /* Reducido de 10px */
+    line-height: 1.2;
+    padding: 0;
+}
+
+/**
+ * Color específico para título de victoria
+ */
+.victoria-texto h3 {
+    color: var(--color-success);
+}
+
+/**
+ * Color específico para título de derrota
+ */
+.derrota-texto h3 {
+    color: var(--color-danger);
+}
+
+/**
+ * Párrafo en resultado de batalla
+ */
+.resultado-batalla p {
+    font-size: 0.95rem;
+    /* Texto ligeramente más pequeño */
+    color: var(--color-text);
+    margin-bottom: 4px;
+    /* Reducido de 10px */
+    line-height: 0.7;
+}
+
+/**
+ * Texto de puntos ganados
+ */
+.puntos-ganados {
+    color: var(--color-accent);
+    font-size: 1.2rem;
+    /* Reducido de 1.3rem */
+    font-weight: bold;
+    margin-top: 8px;
+    /* Reducido de 10px */
+    margin-bottom: 8px;
+    /* Reducido de 15px */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 5px 0;
+}
+
+/**
+ * Animación de pulso para el resultado
+ */
+@keyframes pulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.02);
+    }
+}
+
+/**
+ * Contenedor de botones en la escena de batallas
+ */
+.battle-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 15px;
+    /* Espacio reducido */
+    padding-top: 10px;
+}
+
+/* ========== PANTALLA FINAL ========== */
+/**
+ * Sección de puntuación final
+ */
+.puntuacion-final,
+.rango-final {
+    background: rgba(30, 30, 30, 0.9);
+    border-radius: 10px;
+    padding: 30px;
+    text-align: center;
+    border: 2px solid var(--color-border);
+}
+
+/**
+ * Títulos en pantalla final
+ */
+.puntuacion-final h3,
+.rango-final h3 {
+    color: var(--color-text-dim);
+    margin-bottom: 20px;
+    font-size: 1.3rem;
+}
+
+/**
+ * Puntuación grande en pantalla final
+ */
+.puntuacion-grande {
+    font-size: 3.5rem;
+    font-weight: bold;
+    color: var(--color-accent);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+/**
+ * Rango del jugador
+ */
+.rango {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: var(--color-info);
+}
+
+/**
+ * Rango "Veterano" con efecto especial
+ */
+.rango.veterano {
+    color: var(--color-accent);
+    animation: glow 2s ease-in-out infinite alternate;
+}
+
+/**
+ * Efecto de brillo para el rango "Veterano"
+ */
+@keyframes glow {
+    from {
+        text-shadow: 0 0 10px rgba(218, 165, 32, 0.5);
+    }
+
+    to {
+        text-shadow: 0 0 20px rgba(218, 165, 32, 0.8),
+            0 0 30px rgba(218, 165, 32, 0.6);
+    }
+}
+
+/**
+ * Item individual en resumen de batallas
+ */
+.resumen-batalla {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 5px;
+    padding: 15px;
+    border-left: 4px solid var(--color-info);
+}
+
+/**
+ * Título en resumen de batalla
+ */
+.resumen-batalla h4 {
+    color: var(--color-text);
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+}
+
+/**
+ * Párrafo en resumen de batalla
+ */
+.resumen-batalla p {
+    color: var(--color-text-dim);
+    margin-bottom: 5px;
+}
+
+/* ========== ANIMACIÓN DE CONFIRMACIÓN ========== */
+/**
+ * Animación flotante de confirmación al añadir producto al carrito
+ */
+.animacion-confirmacion {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(40, 167, 69, 0.95);
+    color: white;
+    padding: 15px 30px;
+    border-radius: 10px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    z-index: 1000;
+    opacity: 0;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+    text-align: center;
+    min-width: 180px;
+    pointer-events: none;
+    border: 2px solid white;
+    animation: flotarDesvanecer 1s ease-in-out;
+}
+
+/**
+ * Animación de flotar y desvanecer para confirmación
+ */
+@keyframes flotarDesvanecer {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.8);
+    }
+
+    30% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+
+    70% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(1.1);
+    }
+}
+
+/* ========== RESPONSIVE ========== */
+/**
+ * Media query para tablets y pantallas medianas
+ */
+@media (max-width: 1200px) {
+    .market-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .lista-productos {
+        max-height: 300px;
+    }
+
+    .cesta-compra {
+        max-height: 200px;
+    }
+}
+
+/**
+ * Media query para móviles grandes y tablets pequeñas
+ */
+@media (max-width: 768px) {
+    .scene-container {
+        padding: 15px;
+    }
+
+    .scene-header h1,
+    .scene-header h2 {
+        font-size: 1.6rem;
+    }
+
+    .estadisticas {
+        grid-template-columns: 1fr;
+    }
+
+    .combatientes {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .vs {
+        order: -1;
+        margin: 0 auto;
+    }
+
+    .resultado-final {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .lista-productos {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+
+    .lista-enemigos {
+        grid-template-columns: 1fr;
+    }
+
+    /* Responsive para cartel de victoria/derrota */
+    .resultado-batalla {
+        padding: 12px 20px;
+    }
+
+    .victoria-texto h3,
+    .derrota-texto h3 {
+        font-size: 1.5rem;
+    }
+
+    .puntos-ganados {
+        font-size: 1.1rem;
+    }
+
+    .battle-buttons {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .battle-buttons .btn {
+        min-width: 200px;
+    }
+}
+
+/**
+ * Media query para móviles pequeños
+ */
+@media (max-width: 480px) {
+    .scene-content {
+        padding: 15px;
+    }
+
+    .tarjeta-jugador {
+        padding: 20px;
+    }
+
+    .btn {
+        padding: 10px 20px;
+        font-size: 1rem;
+        min-width: 150px;
+    }
+
+    .producto {
+        padding: 12px;
+    }
+
+    .enemigo {
+        padding: 20px;
+    }
+
+    .combatiente {
+        padding: 20px;
+        min-height: 250px;
+    }
+
+    .puntuacion-grande {
+        font-size: 2.8rem;
+    }
+
+    .rango {
+        font-size: 2rem;
+    }
+
+    /* Ajustes adicionales para móviles */
+    .resultado-batalla {
+        padding: 10px 15px;
+    }
+
+    .victoria-texto h3,
+    .derrota-texto h3 {
+        font-size: 1.4rem;
+    }
+
+    .resultado-batalla p {
+        font-size: 0.9rem;
+    }
+
+    .puntos-ganados {
+        font-size: 1rem;
+    }
+}
+
+/* ========== SCROLLBAR PERSONALIZADO ========== */
+/**
+ * Personalización de la barra de scroll
+ */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+/**
+ * Track de la barra de scroll
+ */
+::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+}
+
+/**
+ * Thumb de la barra de scroll
+ */
+::-webkit-scrollbar-thumb {
+    background: var(--color-primary);
+    border-radius: 4px;
+}
+
+/**
+ * Thumb de la barra de scroll en hover
+ */
+::-webkit-scrollbar-thumb:hover {
+    background: var(--color-primary-dark);
+}
