@@ -7,259 +7,433 @@
     <title>Aventura en el Reino de JS</title>
     <link rel="stylesheet" href="css/styles.css" />
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
 <body>
     <!-- Fondo decorativo -->
     <div class="background-overlay"></div>
 
-    <!-- Escena 1: Inicio -->
-    <div id="escena-inicio" class="escena activa">
-        <div class="scene-container">
-            <div class="scene-header">
-                <h1>AVENTURA EN EL REINO DE JS</h1>
-                <div class="subtitle">La Batalla por el Trono</div>
-            </div>
-
-            <div class="scene-content">
-                <div class="tarjeta-jugador">
-                    <div class="avatar-container">
-                        <img id="avatar-jugador" src="assets/images/player.png" alt="Avatar del Jugador" />
-                    </div>
-                    <h2 id="nombre-jugador">Cazador</h2>
-                    <div class="estadisticas">
-                        <div class="stat">
-                            <span class="stat-label">Ataque:</span>
-                            <span id="ataque-jugador" class="stat-value">0</span>
-                        </div>
-                        <div class="stat">
-                            <span class="stat-label">Defensa:</span>
-                            <span id="defensa-jugador" class="stat-value">0</span>
-                        </div>
-                        <div class="stat">
-                            <span class="stat-label">Vida:</span>
-                            <span id="vida-jugador" class="stat-value">100</span>
-                        </div>
-                        <div class="stat">
-                            <span class="stat-label">Puntos:</span>
-                            <span id="puntos-jugador" class="stat-value">0</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="scene-footer">
-                <button id="btn-continuar-inicio" class="btn btn-primary">
-                    <i></i>Comenzar Aventura
-                </button>
-            </div>
-        </div>
+    <!-- Monedero fijo -->
+    <div id="monedero" class="monedero">
+        <img src="assets/images/monedero.png" alt="Monedero">
+        <span id="dinero-jugador">100</span>
     </div>
 
-    <!-- Escena 2: Mercado -->
-    <div id="escena-mercado" class="escena">
-        <div class="scene-container">
-            <div class="scene-header">
-                <h2>MERCADO NEGRO</h2>
-                <div class="subtitle">Equípate para la batalla</div>
+    <!-- ESTRUCTURA SPA (Single Page Application) -->
+    <div class="spa-container">
+
+        <!-- HEADER (10vh) -->
+        <header class="spa-header">
+            <div class="header-content">
+                <h1 id="header-titulo">AVENTURA EN EL REINO DE JS</h1>
+                <div id="header-subtitulo" class="header-subtitle">La Batalla por el Trono</div>
             </div>
+        </header>
 
-            <div class="scene-content mercado-content">
-                <div class="market-grid">
-                    <div class="productos-section">
-                        <h3>Productos Disponibles</h3>
-                        <div id="lista-productos" class="lista-productos">
-                            <!-- Los productos se cargan dinámicamente aquí -->
-                        </div>
-                    </div>
+        <!-- MAIN CONTENT (70vh) -->
+        <main class="spa-main">
 
-                    <div class="cesta-section">
-                        <div class="inventario-header">
-                            <h3>Inventario</h3>
-                            <div class="inventario-count">
-                                Objetos: <span id="total-objetos">0</span>
-                            </div>
-                        </div>
-                        <div id="cesta-compra" class="cesta-compra">
-                            <div class="cesta-vacia">
-                                <p>Tu inventario está vacío</p>
-                            </div>
-                        </div>
-                        <div class="stats-summary">
-                            <div class="stat-summary">
-                                <span>Ataque total:</span>
-                                <strong id="ataque-total">0</strong>
-                            </div>
-                            <div class="stat-summary">
-                                <span>Defensa total:</span>
-                                <strong id="defensa-total">0</strong>
-                            </div>
-                            <div class="stat-summary">
-                                <span>Vida extra:</span>
-                                <strong id="vida-extra">0</strong>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="scene-footer">
-                <button id="btn-continuar-mercado" class="btn btn-primary">Continuar a la Batalla</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Escena 3: Estado Actualizado -->
-    <div id="escena-estado" class="escena">
-        <div class="scene-container">
-            <div class="scene-header">
-                <h2>ESTADO ACTUALIZADO</h2>
-                <div class="subtitle">Tu poder ha crecido</div>
-            </div>
-
-            <div class="scene-content">
-                <div class="tarjeta-jugador actualizada">
-                    <div class="avatar-container">
-                        <img id="avatar-jugador-estado" src="assets/images/player.png" alt="Avatar del Jugador" />
-                    </div>
-                    <h2 id="nombre-jugador-estado">Cazador</h2>
-                    <div class="estadisticas">
-                        <div class="stat">
-                            <span class="stat-label">Ataque:</span>
-                            <span id="ataque-jugador-estado" class="stat-value">0</span>
-                        </div>
-                        <div class="stat">
-                            <span class="stat-label">Defensa:</span>
-                            <span id="defensa-jugador-estado" class="stat-value">0</span>
-                        </div>
-                        <div class="stat">
-                            <span class="stat-label">Vida:</span>
-                            <span id="vida-jugador-estado" class="stat-value">100</span>
-                        </div>
-                        <div class="stat">
-                            <span class="stat-label">Puntos:</span>
-                            <span id="puntos-jugador-estado" class="stat-value">0</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="scene-footer">
-                <button id="btn-continuar-estado" class="btn btn-primary">Ver Enemigos</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Escena 4: Enemigos -->
-    <div id="escena-enemigos" class="escena">
-        <div class="scene-container">
-            <div class="scene-header">
-                <h2>ENEMIGOS DEL REINO</h2>
-                <div class="subtitle">Elige tu destino</div>
-            </div>
-
-            <div class="scene-content">
-                <div id="lista-enemigos" class="lista-enemigos">
-                    <!-- Los enemigos se cargan dinámicamente aquí -->
-                </div>
-            </div>
-
-            <div class="scene-footer">
-                <button id="btn-continuar-enemigos" class="btn btn-danger">Iniciar Batallas</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Escena 5: Batallas -->
-    <div id="escena-batallas" class="escena">
-        <div class="scene-container">
-            <div class="scene-header">
-                <h2>CAMPO DE BATALLA</h2>
-                <div class="subtitle">La lucha por la supervivencia</div>
-            </div>
-
-            <div class="scene-content battle-content">
-                <div class="battle-info">
-                    <div class="combatientes">
-                        <div class="combatiente jugador-combatiente">
-                            <div class="combatiente-header">
-                                <img id="avatar-batalla-jugador" src="assets/images/player.png" alt="Jugador" />
-                                <h3 id="nombre-batalla-jugador">Cazador</h3>
-                            </div>
-                            <div class="vida-container">
-                                <div class="vida-label">Vida</div>
-                                <div class="vida-bar">
-                                    <div class="vida-fill" id="vida-bar-jugador"></div>
+            <!-- ESCENA 0: CREACIÓN DEL PERSONAJE -->
+            <div id="escena-creacion" class="escena activa">
+                <div class="scene-container">
+                    <div class="scene-content">
+                        <div class="creacion-personaje">
+                            <div class="avatar-seleccion">
+                                <h3>Selecciona tu Avatar</h3>
+                                <div class="avatars-disponibles">
+                                    <div class="avatar-option active" data-avatar="assets/images/player.png">
+                                        <img src="assets/images/player.png" alt="Guerrero">
+                                        <p>Guerrero</p>
+                                    </div>
+                                    <div class="avatar-option" data-avatar="assets/images/player.png">
+                                        <img src="assets/images/player.png" alt="Mago">
+                                        <p>Mago</p>
+                                    </div>
+                                    <div class="avatar-option" data-avatar="assets/images/player.png">
+                                        <img src="assets/images/player.png" alt="Arquero">
+                                        <p>Arquero</p>
+                                    </div>
                                 </div>
-                                <span id="vida-texto-jugador" class="vida-texto">100/100</span>
                             </div>
-                        </div>
 
-                        <div class="vs-container">
-                            <div class="vs">VS</div>
-                        </div>
-
-                        <div class="combatiente enemigo-combatiente">
-                            <div class="combatiente-header">
-                                <img id="avatar-batalla-enemigo" src="" alt="Enemigo" />
-                                <h3 id="nombre-batalla-enemigo">Enemigo</h3>
-                            </div>
-                            <div class="vida-container">
-                                <div class="vida-label">Vida</div>
-                                <div class="vida-bar">
-                                    <div class="vida-fill" id="vida-bar-enemigo"></div>
+                            <div class="formulario-creacion">
+                                <div class="form-group">
+                                    <label for="nombre-personaje">
+                                        <i class="fas fa-user"></i> Nombre del Personaje
+                                    </label>
+                                    <input type="text" id="nombre-personaje" placeholder="Escribe tu nombre"
+                                        value="Cazador" maxlength="20">
                                 </div>
-                                <span id="vida-texto-enemigo" class="vida-texto">0/0</span>
+
+                                <div class="estadisticas-creacion">
+                                    <h3><i class="fas fa-chart-bar"></i> Estadísticas Base</h3>
+                                    <p class="puntos-disponibles">Puntos disponibles: <span
+                                            id="puntos-disponibles">10</span></p>
+
+                                    <div class="stat-control">
+                                        <label for="vida-base">Vida Base</label>
+                                        <div class="stat-slider">
+                                            <input type="range" id="vida-base" min="80" max="150" value="100"
+                                                class="slider">
+                                            <span id="vida-valor" class="stat-value">100</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="stat-control">
+                                        <label for="ataque-base">Ataque Base</label>
+                                        <div class="stat-slider">
+                                            <input type="range" id="ataque-base" min="0" max="30" value="5"
+                                                class="slider">
+                                            <span id="ataque-valor" class="stat-value">5</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="stat-control">
+                                        <label for="defensa-base">Defensa Base</label>
+                                        <div class="stat-slider">
+                                            <input type="range" id="defensa-base" min="0" max="30" value="5"
+                                                class="slider">
+                                            <span id="defensa-valor" class="stat-value">5</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="resumen-creacion">
+                                        <h4>Resumen de Estadísticas:</h4>
+                                        <div class="resumen-stats">
+                                            <p><strong>Vida:</strong> <span id="resumen-vida">100</span></p>
+                                            <p><strong>Ataque:</strong> <span id="resumen-ataque">5</span></p>
+                                            <p><strong>Defensa:</strong> <span id="resumen-defensa">5</span></p>
+                                            <p><strong>Puntos usados:</strong> <span id="puntos-usados">10</span>/10</p>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <div id="resultado-batalla" class="resultado-batalla">
-                        <!-- Aquí se mostrará el resultado de la batalla -->
+                    <div class="scene-footer">
+                        <button id="btn-crear-personaje" class="btn btn-primary">
+                            <i class="fas fa-check"></i> Crear Personaje
+                        </button>
                     </div>
                 </div>
             </div>
 
-            <div class="scene-footer battle-buttons">
-                <button id="btn-continuar-batallas" class="btn btn-primary" style="display: none">Continuar</button>
-                <button id="btn-siguiente-batalla" class="btn btn-secondary" style="display: none">Siguiente
-                    Batalla</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Escena 6: Final -->
-    <div id="escena-final" class="escena">
-        <div class="scene-container">
-            <div class="scene-header">
-                <h2>AVENTURA COMPLETADA</h2>
-                <div class="subtitle">Tu leyenda ha sido escrita</div>
-            </div>
-
-            <div class="scene-content final-content">
-                <div class="resultado-final">
-                    <div class="puntuacion-final">
-                        <h3>Puntuación Final</h3>
-                        <div class="puntuacion-grande" id="puntos-final">0</div>
+            <!-- ESCENA 1: INICIO -->
+            <div id="escena-inicio" class="escena">
+                <div class="scene-container">
+                    <div class="scene-content">
+                        <div class="tarjeta-jugador">
+                            <div class="avatar-container">
+                                <img id="avatar-jugador" src="assets/images/player.png" alt="Avatar del Jugador" />
+                            </div>
+                            <h2 id="nombre-jugador">Cazador</h2>
+                            <div class="estadisticas">
+                                <div class="stat">
+                                    <span class="stat-label">Ataque:</span>
+                                    <span id="ataque-jugador" class="stat-value">5</span>
+                                </div>
+                                <div class="stat">
+                                    <span class="stat-label">Defensa:</span>
+                                    <span id="defensa-jugador" class="stat-value">5</span>
+                                </div>
+                                <div class="stat">
+                                    <span class="stat-label">Vida:</span>
+                                    <span id="vida-jugador" class="stat-value">100</span>
+                                </div>
+                                <div class="stat">
+                                    <span class="stat-label">Puntos:</span>
+                                    <span id="puntos-jugador" class="stat-value">0</span>
+                                </div>
+                                <div class="stat">
+                                    <span class="stat-label">Dinero:</span>
+                                    <span id="dinero-jugador-inicio" class="stat-value">100</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="rango-final">
-                        <h3>Tu Rango</h3>
-                        <div class="rango" id="rango-final">Novato</div>
+
+                    <div class="scene-footer">
+                        <button id="btn-continuar-inicio" class="btn btn-primary">
+                            <i class="fas fa-play"></i> Comenzar Aventura
+                        </button>
                     </div>
                 </div>
+            </div>
 
-                <div class="resumen-batallas">
-                    <h3>Resumen de Batallas</h3>
-                    <div id="resumen-combates" class="resumen-combates">
-                        <!-- Resumen de combates -->
+            <!-- ESCENA 2: MERCADO -->
+            <div id="escena-mercado" class="escena">
+                <div class="scene-container">
+                    <div class="scene-content mercado-content">
+                        <div class="market-grid">
+                            <div class="productos-section">
+                                <h3>Productos Disponibles</h3>
+                                <div id="lista-productos" class="lista-productos">
+                                    <!-- Los productos se cargan dinámicamente aquí -->
+                                </div>
+                            </div>
+
+                            <div class="cesta-section">
+                                <div class="inventario-header">
+                                    <h3>Inventario (Mercado)</h3>
+                                    <div class="inventario-count">
+                                        Objetos: <span id="total-objetos">0</span>
+                                    </div>
+                                </div>
+                                <div id="cesta-compra" class="cesta-compra">
+                                    <div class="cesta-vacia">
+                                        <i class="fas fa-box-open"></i>
+                                        <p>Tu inventario está vacío</p>
+                                    </div>
+                                </div>
+                                <div class="stats-summary">
+                                    <div class="stat-summary">
+                                        <span>Ataque total:</span>
+                                        <strong id="ataque-total">5</strong>
+                                    </div>
+                                    <div class="stat-summary">
+                                        <span>Defensa total:</span>
+                                        <strong id="defensa-total">5</strong>
+                                    </div>
+                                    <div class="stat-summary">
+                                        <span>Vida extra:</span>
+                                        <strong id="vida-extra">0</strong>
+                                    </div>
+                                    <div class="stat-summary">
+                                        <span>Dinero disponible:</span>
+                                        <strong id="dinero-disponible">100</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="scene-footer">
+                        <button id="btn-continuar-mercado" class="btn btn-primary">Continuar a la Batalla</button>
                     </div>
                 </div>
             </div>
 
-            <div class="scene-footer">
-                <button id="btn-reiniciar" class="btn btn-primary">Jugar de Nuevo</button>
+            <!-- ESCENA 3: ESTADO ACTUALIZADO -->
+            <div id="escena-estado" class="escena">
+                <div class="scene-container">
+                    <div class="scene-content">
+                        <div class="tarjeta-jugador actualizada">
+                            <div class="avatar-container">
+                                <img id="avatar-jugador-estado" src="assets/images/player.png"
+                                    alt="Avatar del Jugador" />
+                            </div>
+                            <h2 id="nombre-jugador-estado">Cazador</h2>
+                            <div class="estadisticas">
+                                <div class="stat">
+                                    <span class="stat-label">Ataque:</span>
+                                    <span id="ataque-jugador-estado" class="stat-value">5</span>
+                                </div>
+                                <div class="stat">
+                                    <span class="stat-label">Defensa:</span>
+                                    <span id="defensa-jugador-estado" class="stat-value">5</span>
+                                </div>
+                                <div class="stat">
+                                    <span class="stat-label">Vida:</span>
+                                    <span id="vida-jugador-estado" class="stat-value">100</span>
+                                </div>
+                                <div class="stat">
+                                    <span class="stat-label">Puntos:</span>
+                                    <span id="puntos-jugador-estado" class="stat-value">0</span>
+                                </div>
+                                <div class="stat">
+                                    <span class="stat-label">Dinero:</span>
+                                    <span id="dinero-jugador-estado" class="stat-value">100</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="scene-footer">
+                        <button id="btn-continuar-estado" class="btn btn-primary">Ver Enemigos</button>
+                    </div>
+                </div>
             </div>
-        </div>
+
+            <!-- ESCENA 4: ENEMIGOS -->
+            <div id="escena-enemigos" class="escena">
+                <div class="scene-container">
+                    <div class="scene-content">
+                        <div id="lista-enemigos" class="lista-enemigos">
+                            <!-- Los enemigos se cargan dinámicamente aquí -->
+                        </div>
+                    </div>
+
+                    <div class="scene-footer">
+                        <button id="btn-continuar-enemigos" class="btn btn-danger">Iniciar Batallas</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ESCENA 5: BATALLAS -->
+            <div id="escena-batallas" class="escena">
+                <div class="scene-container">
+                    <div class="scene-content battle-content">
+                        <div class="battle-info">
+                            <div class="combatientes">
+                                <div class="combatiente jugador-combatiente">
+                                    <div class="combatiente-header">
+                                        <img id="avatar-batalla-jugador" src="assets/images/player.png" alt="Jugador" />
+                                        <h3 id="nombre-batalla-jugador">Cazador</h3>
+                                    </div>
+                                    <div class="vida-container">
+                                        <div class="vida-label">Vida</div>
+                                        <div class="vida-bar">
+                                            <div class="vida-fill" id="vida-bar-jugador"></div>
+                                        </div>
+                                        <span id="vida-texto-jugador" class="vida-texto">100/100</span>
+                                    </div>
+                                </div>
+
+                                <div class="vs-container">
+                                    <div class="vs">VS</div>
+                                </div>
+
+                                <div class="combatiente enemigo-combatiente">
+                                    <div class="combatiente-header">
+                                        <img id="avatar-batalla-enemigo" src="" alt="Enemigo" />
+                                        <h3 id="nombre-batalla-enemigo">Enemigo</h3>
+                                    </div>
+                                    <div class="vida-container">
+                                        <div class="vida-label">Vida</div>
+                                        <div class="vida-bar">
+                                            <div class="vida-fill" id="vida-bar-enemigo"></div>
+                                        </div>
+                                        <span id="vida-texto-enemigo" class="vida-texto">0/0</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="resultado-batalla" class="resultado-batalla">
+                                <!-- Aquí se mostrará el resultado de la batalla -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="scene-footer battle-buttons">
+                        <button id="btn-continuar-batallas" class="btn btn-primary"
+                            style="display: none">Continuar</button>
+                        <button id="btn-siguiente-batalla" class="btn btn-secondary" style="display: none">Siguiente
+                            Batalla</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ESCENA 6: FINAL -->
+            <div id="escena-final" class="escena">
+                <div class="scene-container">
+                    <div class="scene-content final-content">
+                        <div class="resultado-final">
+                            <div class="puntuacion-final">
+                                <h3>Puntuación Final</h3>
+                                <div class="puntuacion-grande" id="puntos-final">0</div>
+                            </div>
+                            <div class="rango-final">
+                                <h3>Tu Rango</h3>
+                                <div class="rango" id="rango-final">Novato</div>
+                            </div>
+                        </div>
+
+                        <div class="resumen-batallas">
+                            <h3>Resumen de Batallas</h3>
+                            <div id="resumen-combates" class="resumen-combates">
+                                <!-- Resumen de combates -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="scene-footer">
+                        <button id="btn-ver-ranking" class="btn btn-secondary">Ver Ranking</button>
+                        <button id="btn-reiniciar" class="btn btn-primary">Jugar de Nuevo</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ESCENA 7: RANKING -->
+            <div id="escena-ranking" class="escena">
+                <div class="scene-container">
+                    <div class="scene-content ranking-content">
+                        <div class="ranking-table-container">
+                            <table id="tabla-ranking" class="tabla-ranking">
+                                <thead>
+                                    <tr>
+                                        <th>Posición</th>
+                                        <th>Nombre</th>
+                                        <th>Puntuación</th>
+                                        <th>Monedas</th>
+                                        <th>Fecha</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="cuerpo-tabla-ranking">
+                                    <!-- Filas del ranking se cargarán dinámicamente -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="scene-footer">
+                        <button id="btn-volver-final" class="btn btn-secondary">Volver al Resultado</button>
+                        <button id="btn-reiniciar-ranking" class="btn btn-primary">Jugar de Nuevo</button>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- FOOTER (20vh) CON INVENTARIO FIJO Y MONEDERO DENTRO -->
+        <footer class="spa-footer">
+            <!-- MONEDERO DENTRO DEL FOOTER -->
+            <div id="monedero" class="monedero">
+                <img src="assets/images/monedero.png" alt="Monedero">
+                <span id="dinero-jugador">100</span>
+            </div>
+
+            <div class="footer-inventario">
+                <h3><i class="fas fa-backpack"></i> Inventario</h3>
+                <div class="inventario-footer-grid" id="inventario-footer">
+                    <!-- 6 celdas de inventario que se llenarán dinámicamente -->
+                    <div class="celda-inventario vacia" data-indice="0">
+                        <div class="celda-contenido">
+                            <span class="numero-celda">1</span>
+                        </div>
+                    </div>
+                    <div class="celda-inventario vacia" data-indice="1">
+                        <div class="celda-contenido">
+                            <span class="numero-celda">2</span>
+                        </div>
+                    </div>
+                    <div class="celda-inventario vacia" data-indice="2">
+                        <div class="celda-contenido">
+                            <span class="numero-celda">3</span>
+                        </div>
+                    </div>
+                    <div class="celda-inventario vacia" data-indice="3">
+                        <div class="celda-contenido">
+                            <span class="numero-celda">4</span>
+                        </div>
+                    </div>
+                    <div class="celda-inventario vacia" data-indice="4">
+                        <div class="celda-contenido">
+                            <span class="numero-celda">5</span>
+                        </div>
+                    </div>
+                    <div class="celda-inventario vacia" data-indice="5">
+                        <div class="celda-contenido">
+                            <span class="numero-celda">6</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="footer-info">
+                    <p>Espacios disponibles: <span id="espacios-disponibles">6</span>/6</p>
+                </div>
+            </div>
+        </footer>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>

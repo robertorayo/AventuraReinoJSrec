@@ -76,6 +76,18 @@ class Juego {
         this.btnSiguienteBatalla = document.getElementById('btn-siguiente-batalla');
         /** @type {HTMLElement} Botón para reiniciar el juego */
         this.btnReiniciar = document.getElementById('btn-reiniciar');
+        /** @type {HTMLElement} Botón para ver el ranking */
+        this.btnVerRanking = document.getElementById('btn-ver-ranking');
+        /** @type {HTMLElement} Botón para volver al resultado desde el ranking */
+        this.btnVolverFinal = document.getElementById('btn-volver-final');
+        /** @type {HTMLElement} Botón para reiniciar desde el ranking */
+        this.btnReiniciarRanking = document.getElementById('btn-reiniciar-ranking');
+        this.btnCrearPersonaje = document.getElementById('btn-crear-personaje');
+        this.headerTitulo = document.getElementById('header-titulo');
+        this.headerSubtitulo = document.getElementById('header-subtitulo');
+        this.inventarioFooter = document.getElementById('inventario-footer');
+        this.espaciosDisponibles = document.getElementById('espacios-disponibles');
+
 
         console.log('Botones encontrados:', {
             inicio: !!this.btnContinuarInicio,
@@ -84,7 +96,10 @@ class Juego {
             enemigos: !!this.btnContinuarEnemigos,
             batallas: !!this.btnContinuarBatallas,
             siguiente: !!this.btnSiguienteBatalla,
-            reiniciar: !!this.btnReiniciar
+            reiniciar: !!this.btnReiniciar,
+            verRanking: !!this.btnVerRanking,
+            volverFinal: !!this.btnVolverFinal,
+            reiniciarRanking: !!this.btnReiniciarRanking
         });
     }
 
@@ -94,6 +109,12 @@ class Juego {
      */
     inicializarEventos() {
         console.log('Inicializando eventos...');
+
+        if (this.btnCrearPersonaje) {
+            this.btnCrearPersonaje.addEventListener('click', () => {
+                this.crearPersonaje();
+            });
+        }
 
         // Botón Comenzar Aventura
         if (this.btnContinuarInicio) {
@@ -142,24 +163,48 @@ class Juego {
             });
         }
 
+        if (this.btnVerRanking) {
+            this.btnVerRanking.addEventListener('click', () => {
+                this.mostrarRanking();
+            });
+        }
+
+        if (this.btnVolverFinal) {
+            this.btnVolverFinal.addEventListener('click', () => {
+                this.mostrarEscena('escena-final');
+            });
+        }
+
+        if (this.btnReiniciarRanking) {
+            this.btnReiniciarRanking.addEventListener('click', () => {
+                this.reiniciarJuego();
+            });
+        }
+
         console.log('Eventos inicializados');
     }
 
     /**
-     * Inicia el juego creando el jugador, enemigos y renderizando los elementos iniciales
-     * @private
-     */
+ * Inicia el juego creando el jugador, enemigos y renderizando los elementos iniciales
+ * @private
+ */
     iniciarJuego() {
         console.log('Iniciando juego...');
 
-        this.jugador = new Jugador('Cazador', 'assets/images/player.png');
+        // ELIMINAR ESTA LÍNEA: this.jugador = new Jugador('Cazador', 'assets/images/player.png');
+        // EL JUGADOR AHORA SE CREA EN LA ESCENA DE CREACIÓN DEL PERSONAJE
 
         this.crearEnemigos();
 
-        this.actualizarTarjetaJugador();
+        // Configurar la creación del personaje
+        this.configurarCreacionPersonaje();
+
+        // No llamamos a estas funciones aquí porque el jugador aún no existe
+        // Se llamarán después de crear el personaje
+        // this.actualizarTarjetaJugador();
         this.renderizarProductos();
         this.renderizarEnemigos();
-        this.actualizarEstadisticasMercado();
+        // this.actualizarEstadisticasMercado();
 
         console.log('Juego iniciado correctamente');
     }
@@ -193,6 +238,9 @@ class Juego {
         if (escenaTarget) {
             escenaTarget.classList.add('activa');
             console.log('Escena cambiada exitosamente');
+
+            // Actualizar el header según la escena
+            this.actualizarHeader(idEscena);
         } else {
             console.error('No se encontró la escena:', idEscena);
         }
@@ -202,6 +250,105 @@ class Juego {
             this.actualizarEstadoJugador();
         } else if (idEscena === 'escena-final') {
             this.mostrarResultadoFinal();
+        } else if (idEscena === 'escena-ranking') {
+            this.cargarTablaRanking();
+        }
+    }
+
+    /**
+ * Actualiza el header según la escena actual
+ * @param {string} idEscena - ID de la escena actual
+ * @private
+ */
+    actualizarHeader(idEscena) {
+        const titulos = {
+            'escena-creacion': {
+                titulo: 'CREACIÓN DEL PERSONAJE',
+                subtitulo: 'Forja tu leyenda'
+            },
+            'escena-inicio': {
+                titulo: 'AVENTURA EN EL REINO DE JS',
+                subtitulo: 'La Batalla por el Trono'
+            },
+            'escena-mercado': {
+                titulo: 'MERCADO NEGRO',
+                subtitulo: 'Equípate para la batalla'
+            },
+            'escena-estado': {
+                titulo: 'ESTADO ACTUALIZADO',
+                subtitulo: 'Tu poder ha crecido'
+            },
+            'escena-enemigos': {
+                titulo: 'ENEMIGOS DEL REINO',
+                subtitulo: 'Elige tu destino'
+            },
+            'escena-batallas': {
+                titulo: 'CAMPO DE BATALLA',
+                subtitulo: 'La lucha por la supervivencia'
+            },
+            'escena-final': {
+                titulo: 'AVENTURA COMPLETADA',
+                subtitulo: 'Tu leyenda ha sido escrita'
+            },
+            'escena-ranking': {
+                titulo: 'RANKING DE JUGADORES',
+                subtitulo: 'Los más grandes del reino'
+            }
+        };
+
+        if (titulos[idEscena]) {
+            this.headerTitulo.textContent = titulos[idEscena].titulo;
+            this.headerSubtitulo.textContent = titulos[idEscena].subtitulo;
+        }
+    }
+
+    /**
+ * Actualiza el inventario del footer
+ * @private
+ */
+    actualizarInventarioFooter() {
+        if (!this.inventarioFooter) return;
+
+        // Limpiar el inventario del footer
+        this.inventarioFooter.innerHTML = '';
+
+        // Crear 6 celdas (vacías o con objetos)
+        for (let i = 0; i < 6; i++) {
+            const celda = document.createElement('div');
+            celda.className = 'celda-inventario vacia';
+            celda.setAttribute('data-indice', i);
+
+            if (this.jugador && i < this.jugador.inventario.length) {
+                // Celda ocupada con objeto
+                const producto = this.jugador.inventario[i];
+                celda.classList.remove('vacia');
+                celda.classList.add('ocupada');
+
+                const rarezaClase = producto.rareza.toLowerCase();
+
+                celda.innerHTML = `
+                <div class="celda-contenido">
+                    <img src="${producto.imagen}" alt="${producto.nombre}" class="item-footer" onerror="this.style.display='none'">
+                    <div class="rareza-indicator ${rarezaClase}"></div>
+                </div>
+            `;
+            } else {
+                // Celda vacía
+                celda.innerHTML = `
+                <div class="celda-contenido">
+                    <span class="numero-celda">${i + 1}</span>
+                </div>
+            `;
+            }
+
+            this.inventarioFooter.appendChild(celda);
+        }
+
+        // Actualizar contador de espacios disponibles
+        if (this.espaciosDisponibles && this.jugador) {
+            const espaciosOcupados = Math.min(this.jugador.inventario.length, 6);
+            const espaciosLibres = 6 - espaciosOcupados;
+            this.espaciosDisponibles.textContent = espaciosLibres;
         }
     }
 
@@ -214,6 +361,8 @@ class Juego {
         this.actualizarElemento('defensa-jugador', this.jugador.obtenerDefensaTotal());
         this.actualizarElemento('vida-jugador', this.jugador.obtenerVidaTotal());
         this.actualizarElemento('puntos-jugador', this.jugador.puntos);
+        this.actualizarElemento('dinero-jugador-inicio', this.jugador.dinero);
+        this.jugador.actualizarMonedero();
     }
 
     /**
@@ -225,6 +374,8 @@ class Juego {
         this.actualizarElemento('defensa-jugador-estado', this.jugador.obtenerDefensaTotal());
         this.actualizarElemento('vida-jugador-estado', this.jugador.obtenerVidaTotal());
         this.actualizarElemento('puntos-jugador-estado', this.jugador.puntos);
+        this.actualizarElemento('dinero-jugador-estado', this.jugador.dinero);
+        this.jugador.actualizarMonedero();
     }
 
     /**
@@ -234,6 +385,7 @@ class Juego {
     actualizarEstadisticasMercado() {
         this.actualizarElemento('ataque-total', this.jugador.obtenerAtaqueTotal());
         this.actualizarElemento('defensa-total', this.jugador.obtenerDefensaTotal());
+        this.actualizarElemento('dinero-disponible', this.jugador.dinero);
 
         const bonusVida = this.jugador.inventario
             .filter(item => item.tipo === 'Consumible')
@@ -284,7 +436,7 @@ class Juego {
                 <p class="producto-precio">${formatearPrecio(producto.precio)}</p>
                 <p class="rareza ${rarezaClase}">${producto.rareza.toUpperCase()}</p>
                 <p><small>${producto.tipo}</small></p>
-                <button class="btn btn-comprar" data-nombre="${producto.nombre}" data-rareza="${producto.rareza}">Añadir al Carrito</button>
+                <button class="btn btn-comprar" data-nombre="${producto.nombre}" data-rareza="${producto.rareza}" data-precio="${producto.precio}">Comprar</button>
             `;
             listaProductos.appendChild(productoElement);
         });
@@ -294,9 +446,35 @@ class Juego {
             btn.addEventListener('click', (e) => {
                 const nombreProducto = e.target.getAttribute('data-nombre');
                 const rarezaProducto = e.target.getAttribute('data-rareza');
-                this.manejarCompraProducto(nombreProducto, rarezaProducto, e.target);
+                const precioProducto = parseInt(e.target.getAttribute('data-precio'));
+
+                // Verificar si el jugador tiene suficiente dinero
+                if (this.jugador.dinero >= precioProducto) {
+                    this.manejarCompraProducto(nombreProducto, rarezaProducto, precioProducto, e.target);
+                } else {
+                    this.mostrarMensajeError('¡No tienes suficiente dinero!');
+                }
             });
         });
+    }
+
+    /**
+     * Muestra un mensaje de error temporal
+     * @param {string} mensaje - Mensaje de error a mostrar
+     * @private
+     */
+    mostrarMensajeError(mensaje) {
+        const errorElement = document.createElement('div');
+        errorElement.className = 'animacion-error';
+        errorElement.textContent = mensaje;
+
+        document.body.appendChild(errorElement);
+
+        setTimeout(() => {
+            if (document.body.contains(errorElement)) {
+                document.body.removeChild(errorElement);
+            }
+        }, 1500);
     }
 
     /**
@@ -318,10 +496,11 @@ class Juego {
      * Maneja la compra o retiro de un producto del mercado
      * @param {string} nombreProducto - Nombre del producto
      * @param {string} rarezaProducto - Rareza del producto
+     * @param {number} precioProducto - Precio del producto
      * @param {HTMLElement} boton - Elemento del botón que fue clickeado
      * @private
      */
-    manejarCompraProducto(nombreProducto, rarezaProducto, boton) {
+    manejarCompraProducto(nombreProducto, rarezaProducto, precioProducto, boton) {
         const productos = Mercado.obtenerProductos();
 
         // Buscar el producto por nombre Y rareza
@@ -338,14 +517,24 @@ class Juego {
         const estaEnCesta = productoElement.classList.contains('seleccionado');
 
         if (!estaEnCesta) {
-            this.jugador.añadirObjeto(producto);
-            productoElement.classList.add('seleccionado');
-            boton.textContent = 'Retirar';
-            boton.className = 'btn btn-retirar';
+            // Verificar si hay suficiente dinero
+            if (this.jugador.restarDinero(precioProducto)) {
+                this.jugador.añadirObjeto(producto);
+                productoElement.classList.add('seleccionado');
+                boton.textContent = 'Vender';
+                boton.className = 'btn btn-retirar';
 
-            // Mostrar animación de confirmación
-            this.mostrarAnimacionConfirmacion();
+                // Mostrar animación de confirmación
+                this.mostrarAnimacionConfirmacion();
+            } else {
+                this.mostrarMensajeError('¡No tienes suficiente dinero!');
+                return;
+            }
         } else {
+            // Vender el producto (recuperar el 80% del precio)
+            const precioVenta = Math.floor(precioProducto * 0.8);
+            this.jugador.sumarDinero(precioVenta);
+
             // Buscar y eliminar el producto exacto por nombre y rareza
             const index = this.jugador.inventario.findIndex(item =>
                 item.nombre === nombreProducto && item.rareza === rarezaProducto
@@ -354,13 +543,35 @@ class Juego {
                 this.jugador.inventario.splice(index, 1);
             }
             productoElement.classList.remove('seleccionado');
-            boton.textContent = 'Añadir al Carrito';
+            boton.textContent = 'Comprar';
             boton.className = 'btn btn-comprar';
+
+            // Mostrar animación de venta
+            this.mostrarAnimacionVenta(precioVenta);
         }
 
         this.actualizarCesta();
         this.actualizarTarjetaJugador();
         this.actualizarEstadisticasMercado();
+    }
+
+    /**
+     * Muestra una animación de venta cuando se vende un producto
+     * @param {number} precioVenta - Precio de venta del producto
+     * @private
+     */
+    mostrarAnimacionVenta(precioVenta) {
+        const animacion = document.createElement('div');
+        animacion.className = 'animacion-venta';
+        animacion.textContent = `+${precioVenta} €`;
+
+        document.body.appendChild(animacion);
+
+        setTimeout(() => {
+            if (document.body.contains(animacion)) {
+                document.body.removeChild(animacion);
+            }
+        }, 1000);
     }
 
     /**
@@ -377,32 +588,30 @@ class Juego {
 
         if (this.jugador.inventario.length === 0) {
             cesta.innerHTML = `
-                <div class="cesta-vacia">
-                    <i class="fas fa-box-open"></i>
-                    <p>Tu inventario está vacío</p>
-                </div>
-            `;
+            <div class="cesta-vacia">
+                <i class="fas fa-box-open"></i>
+                <p>Tu inventario está vacío</p>
+            </div>
+        `;
             if (totalObjetos) totalObjetos.textContent = '0';
-            return;
-        }
-
-        this.jugador.inventario.forEach(producto => {
-            const itemElement = document.createElement('div');
-
-            // Usar la rareza directamente en minúsculas
-            const rarezaClase = producto.rareza.toLowerCase();
-
-            itemElement.className = `item-inventario ${rarezaClase}`;
-
-            itemElement.innerHTML = `
+        } else {
+            this.jugador.inventario.forEach(producto => {
+                const itemElement = document.createElement('div');
+                const rarezaClase = producto.rareza.toLowerCase();
+                itemElement.className = `item-inventario ${rarezaClase}`;
+                itemElement.innerHTML = `
                 <img src="${producto.imagen}" alt="${producto.nombre}" onerror="this.style.display='none'">
             `;
-            cesta.appendChild(itemElement);
-        });
+                cesta.appendChild(itemElement);
+            });
 
-        if (totalObjetos) {
-            totalObjetos.textContent = this.jugador.inventario.length;
+            if (totalObjetos) {
+                totalObjetos.textContent = this.jugador.inventario.length;
+            }
         }
+
+        // ¡IMPORTANTE! Actualizar también el inventario del footer
+        this.actualizarInventarioFooter();
     }
 
     /**
@@ -413,7 +622,7 @@ class Juego {
         // Crear elemento de confirmación
         const animacion = document.createElement('div');
         animacion.className = 'animacion-confirmacion';
-        animacion.textContent = '✓ Añadido al carrito';
+        animacion.textContent = '✓ Comprado';
 
         document.body.appendChild(animacion);
 
@@ -447,11 +656,25 @@ class Juego {
                     <p><strong>Ataque:</strong> ${enemigo.ataque}</p>
                     <p><strong>Vida:</strong> ${enemigo.vida}</p>
                     ${esJefe ? `<p><strong>Multiplicador:</strong> ${enemigo.multiplicadorDaño}x</p>` : ''}
+                    <p><strong>Recompensa:</strong> ${this.calcularRecompensa(enemigo)}€</p>
                 </div>
                 ${esJefe ? '<p class="jefe-label">¡JEFE FINAL!</p>' : ''}
             `;
             listaEnemigos.appendChild(enemigoElement);
         });
+    }
+
+    /**
+     * Calcula la recompensa en monedas por derrotar a un enemigo
+     * @param {Enemigo} enemigo - Enemigo a calcular recompensa
+     * @returns {number} Cantidad de monedas de recompensa
+     * @private
+     */
+    calcularRecompensa(enemigo) {
+        let recompensa = 10;
+        if (enemigo.nombre === 'Orco') recompensa = 20;
+        if (enemigo.nombre === 'Dragón') recompensa = 50;
+        return recompensa;
     }
 
     /**
@@ -517,7 +740,47 @@ class Juego {
                 this.btnContinuarBatallas.style.display = 'inline-block';
                 this.btnContinuarBatallas.textContent = 'Continuar al Resultado Final';
             }
+        } else {
+            // Si gana el jugador, mostrar animación de monedas
+            this.mostrarAnimacionMonedas();
+
+            // Sumar dinero al jugador
+            const recompensa = this.calcularRecompensa(enemigo);
+            this.jugador.sumarDinero(recompensa);
         }
+    }
+
+    /**
+     * Muestra la animación de monedas cayendo
+     * @private
+     */
+    mostrarAnimacionMonedas() {
+        // Posiciones: 25%, 50%, 75% del ancho de la pantalla
+        const posiciones = ['25%', '50%', '75%'];
+
+        posiciones.forEach((pos, index) => {
+            // Crear elemento moneda
+            const moneda = document.createElement('div');
+            moneda.className = 'moneda-animada';
+            moneda.style.left = pos;
+
+            // Crear imagen de moneda (500x500)
+            const img = document.createElement('img');
+            img.src = 'assets/images/moneda.png';
+            img.alt = 'Moneda';
+            img.style.width = '60px';
+            img.style.height = '60px';
+
+            moneda.appendChild(img);
+            document.body.appendChild(moneda);
+
+            // Retraso escalonado para cada moneda
+            setTimeout(() => {
+                if (document.body.contains(moneda)) {
+                    document.body.removeChild(moneda);
+                }
+            }, 2500 + (index * 100));
+        });
     }
 
     /**
@@ -568,12 +831,15 @@ class Juego {
         const resultadoElement = document.getElementById('resultado-batalla');
         if (!resultadoElement) return;
 
+        const recompensa = this.calcularRecompensa(enemigo);
+
         if (resultado.ganador === 'jugador') {
             resultadoElement.innerHTML = `
                 <div class="victoria-texto">
                     <h3>¡VICTORIA!</h3>
                     <p>Has derrotado a ${enemigo.nombre}</p>
                     <p class="puntos-ganados">+${resultado.puntos} puntos</p>
+                    <p class="monedas-ganadas">+${recompensa} monedas</p>
                 </div>
             `;
             resultadoElement.className = 'resultado-batalla victoria';
@@ -658,6 +924,105 @@ class Juego {
     }
 
     /**
+ * Maneja la creación del personaje desde la escena 0
+ * @private
+ */
+    crearPersonaje() {
+        // Obtener valores del formulario
+        const nombre = document.getElementById('nombre-personaje').value.trim() || 'Cazador';
+        const avatar = document.querySelector('.avatar-option.active').getAttribute('data-avatar');
+        const vida = parseInt(document.getElementById('vida-base').value);
+        const ataque = parseInt(document.getElementById('ataque-base').value);
+        const defensa = parseInt(document.getElementById('defensa-base').value);
+
+        // Crear jugador con los valores personalizados
+        this.jugador = new Jugador(nombre, avatar, vida, ataque, defensa);
+
+        // Actualizar la interfaz
+        this.actualizarTarjetaJugador();
+        this.actualizarEstadisticasMercado();
+        this.actualizarCesta();
+
+        // Actualizar inventario del footer
+        this.actualizarInventarioFooter();
+
+        // Cambiar a la escena de inicio
+        this.mostrarEscena('escena-inicio');
+    }
+
+    /**
+     * Configura los eventos para la creación del personaje
+     * @private
+     */
+    configurarCreacionPersonaje() {
+        // Sliders de estadísticas
+        const vidaSlider = document.getElementById('vida-base');
+        const ataqueSlider = document.getElementById('ataque-base');
+        const defensaSlider = document.getElementById('defensa-base');
+
+        // Actualizar valores en tiempo real
+        vidaSlider.addEventListener('input', (e) => {
+            document.getElementById('vida-valor').textContent = e.target.value;
+            document.getElementById('resumen-vida').textContent = e.target.value;
+            this.calcularPuntosUsados();
+        });
+
+        ataqueSlider.addEventListener('input', (e) => {
+            document.getElementById('ataque-valor').textContent = e.target.value;
+            document.getElementById('resumen-ataque').textContent = e.target.value;
+            this.calcularPuntosUsados();
+        });
+
+        defensaSlider.addEventListener('input', (e) => {
+            document.getElementById('defensa-valor').textContent = e.target.value;
+            document.getElementById('resumen-defensa').textContent = e.target.value;
+            this.calcularPuntosUsados();
+        });
+
+        // Selección de avatar
+        document.querySelectorAll('.avatar-option').forEach(option => {
+            option.addEventListener('click', () => {
+                document.querySelectorAll('.avatar-option').forEach(opt => {
+                    opt.classList.remove('active');
+                });
+                option.classList.add('active');
+            });
+        });
+
+        // Nombre del personaje
+        const nombreInput = document.getElementById('nombre-personaje');
+        nombreInput.addEventListener('input', (e) => {
+            if (e.target.value.length > 20) {
+                e.target.value = e.target.value.substring(0, 20);
+            }
+        });
+    }
+
+    /**
+     * Calcula los puntos usados en la creación del personaje
+     * @private
+     */
+    calcularPuntosUsados() {
+        const vida = parseInt(document.getElementById('vida-base').value);
+        const ataque = parseInt(document.getElementById('ataque-base').value);
+        const defensa = parseInt(document.getElementById('defensa-base').value);
+
+        // Fórmula: (vida - 80)/10 + ataque + defensa
+        const puntosVida = Math.max(0, (vida - 80) / 10);
+        const puntosTotales = puntosVida + ataque + defensa;
+
+        document.getElementById('puntos-usados').textContent = puntosTotales.toFixed(1);
+
+        // Cambiar color si se excede el límite
+        const puntosElement = document.getElementById('puntos-usados');
+        if (puntosTotales > 10) {
+            puntosElement.style.color = 'var(--color-danger)';
+        } else {
+            puntosElement.style.color = 'var(--color-success)';
+        }
+    }
+
+    /**
      * Muestra el resultado final del juego con puntuación y rango
      * @private
      */
@@ -678,6 +1043,110 @@ class Juego {
         }
 
         this.mostrarResumenBatallas();
+
+        // Guardar el resultado en el ranking
+        this.guardarEnRanking();
+    }
+
+    /**
+     * Guarda los datos del jugador en el ranking (LocalStorage)
+     * @private
+     */
+    guardarEnRanking() {
+        // Obtener datos del jugador
+        const datosJugador = this.jugador.obtenerDatosParaRanking();
+
+        // Obtener ranking actual de LocalStorage o crear uno nuevo
+        let ranking = JSON.parse(localStorage.getItem('ranking-juego-js')) || [];
+
+        // Añadir nuevo jugador al ranking
+        ranking.push(datosJugador);
+
+        // Ordenar por puntuación (descendente)
+        ranking.sort((a, b) => b.puntuacion - a.puntuacion);
+
+        // Mantener solo los 10 mejores resultados
+        ranking = ranking.slice(0, 10);
+
+        // Guardar en LocalStorage
+        localStorage.setItem('ranking-juego-js', JSON.stringify(ranking));
+    }
+
+    /**
+     * Muestra la escena de ranking
+     * @private
+     */
+    mostrarRanking() {
+        this.mostrarEscena('escena-ranking');
+    }
+
+    /**
+     * Carga y muestra la tabla de ranking
+     * @private
+     */
+    cargarTablaRanking() {
+        const cuerpoTabla = document.getElementById('cuerpo-tabla-ranking');
+        if (!cuerpoTabla) return;
+
+        // Obtener ranking de LocalStorage
+        let ranking = JSON.parse(localStorage.getItem('ranking-juego-js')) || [];
+
+        // Si no hay datos, crear algunos datos de ejemplo
+        if (ranking.length === 0) {
+            ranking = this.crearDatosEjemploRanking();
+        }
+
+        // Limpiar tabla
+        cuerpoTabla.innerHTML = '';
+
+        // Llenar tabla con los datos
+        ranking.forEach((jugador, index) => {
+            const fila = document.createElement('tr');
+
+            // Determinar clase especial para los primeros puestos
+            let claseFila = '';
+            if (index === 0) claseFila = 'primer-puesto';
+            if (index === 1) claseFila = 'segundo-puesto';
+            if (index === 2) claseFila = 'tercer-puesto';
+
+            fila.className = claseFila;
+
+            // Emoji para los primeros puestos
+            let emojiPosicion = `${index + 1}`;
+            if (index === 0) emojiPosicion = '🥇';
+            if (index === 1) emojiPosicion = '🥈';
+            if (index === 2) emojiPosicion = '🥉';
+
+            fila.innerHTML = `
+                <td>${emojiPosicion}</td>
+                <td>${jugador.nombre}</td>
+                <td>${jugador.puntuacion}</td>
+                <td>${jugador.monedas}</td>
+                <td>${jugador.fecha}</td>
+            `;
+
+            cuerpoTabla.appendChild(fila);
+        });
+    }
+
+    /**
+     * Crea datos de ejemplo para el ranking
+     * @returns {Array} Datos de ejemplo
+     * @private
+     */
+    crearDatosEjemploRanking() {
+        return [
+            { nombre: "Arturo", puntuacion: 850, monedas: 320, fecha: "15/01/2024" },
+            { nombre: "Morgana", puntuacion: 720, monedas: 280, fecha: "14/01/2024" },
+            { nombre: "Galahad", puntuacion: 650, monedas: 240, fecha: "13/01/2024" },
+            { nombre: "Lancelot", puntuacion: 580, monedas: 210, fecha: "12/01/2024" },
+            { nombre: "Guinevere", puntuacion: 520, monedas: 190, fecha: "11/01/2024" },
+            { nombre: "Merlín", puntuacion: 480, monedas: 170, fecha: "10/01/2024" },
+            { nombre: "Percival", puntuacion: 420, monedas: 150, fecha: "09/01/2024" },
+            { nombre: "Gawain", puntuacion: 380, monedas: 130, fecha: "08/01/2024" },
+            { nombre: "Bedivere", puntuacion: 320, monedas: 110, fecha: "07/01/2024" },
+            { nombre: "Tristán", puntuacion: 280, monedas: 90, fecha: "06/01/2024" }
+        ];
     }
 
     /**
@@ -751,10 +1220,14 @@ class Juego {
             const enemigo = this.enemigos[index];
             const batallaElement = document.createElement('div');
             batallaElement.className = 'resumen-batalla';
+
+            const recompensa = this.calcularRecompensa(enemigo);
+
             batallaElement.innerHTML = `
                 <h4>Batalla ${index + 1}: vs ${enemigo.nombre}</h4>
                 <p><strong>Resultado:</strong> ${batalla.ganador === 'jugador' ? '✅ Victoria' : '❌ Derrota'}</p>
                 <p><strong>Puntos obtenidos:</strong> ${batalla.puntos}</p>
+                ${batalla.ganador === 'jugador' ? `<p><strong>Monedas ganadas:</strong> ${recompensa}</p>` : ''}
             `;
             resumenElement.appendChild(batallaElement);
         });

@@ -1,3 +1,5 @@
+import { RECOMPENSA_ENEMIGO_NORMAL, RECOMPENSA_JEFE } from '../constants.js';
+
 /**
  * Módulo que gestiona el sistema de combate del juego
  * @module Batalla
@@ -29,7 +31,8 @@ export const Batalla = {
             vidaJugadorFinal: vidaJugador,
             vidaEnemigoFinal: vidaEnemigo,
             vidaMaximaJugador: vidaMaximaJugador,
-            vidaMaximaEnemigo: vidaMaximaEnemigo
+            vidaMaximaEnemigo: vidaMaximaEnemigo,
+            dineroGanado: 0
         };
 
         let turno = 1;
@@ -57,6 +60,10 @@ export const Batalla = {
             if (enemigo.multiplicadorDaño) {
                 resultado.puntos = Math.floor(resultado.puntos * enemigo.multiplicadorDaño);
             }
+
+            // Añadir recompensa de dinero
+            resultado.dineroGanado = enemigo.multiplicadorDaño ? RECOMPENSA_JEFE : RECOMPENSA_ENEMIGO_NORMAL;
+
             jugador.sumarPuntos(resultado.puntos);
         } else {
             resultado.ganador = 'enemigo';

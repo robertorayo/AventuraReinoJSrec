@@ -26,3 +26,21 @@ export const TIPOS_PRODUCTO = ['Arma', 'Armadura', 'Consumible'];
  * @constant {string}
  */
 export const SIMBOLO_MONEDA = '€';
+
+/**
+ * Dinero inicial del jugador
+ * @constant {number}
+ */
+export const DINERO_INICIAL = 500;
+
+/**
+ * Recompensa en dinero por vencer a un enemigo normal
+ * @constant {number}
+ */
+export const RECOMPENSA_ENEMIGO_NORMAL = 5;
+
+/**
+ * Recompensa en dinero por vencer a un jefe
+ * @constant {number}
+ */
+export const RECOMPENSA_JEFE = 10;

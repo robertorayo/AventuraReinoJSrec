@@ -8,13 +8,16 @@ export class Jugador {
      * @param {string} nombre - Nombre del jugador
      * @param {string} avatar - Ruta de la imagen del avatar del jugador
      */
-    constructor(nombre, avatar) {
+    constructor(nombre, avatar, vidaBase = 100, ataqueBase = 5, defensaBase = 5) {
         this.nombre = nombre;
         this.avatar = avatar;
         this.puntos = 0;
+        this.dinero = 100;
         this.inventario = [];
-        this.vida = 100;
-        this.vidaMaxima = 100;
+        this.vida = vidaBase;
+        this.vidaMaxima = vidaBase;
+        this.ataqueBase = ataqueBase;  // Nueva propiedad
+        this.defensaBase = defensaBase; // Nueva propiedad
     }
 
     /**
@@ -35,13 +38,47 @@ export class Jugador {
     }
 
     /**
+     * Suma dinero al jugador
+     * @param {number} cantidad - Cantidad de dinero a sumar
+     */
+    sumarDinero(cantidad) {
+        this.dinero += cantidad;
+        this.actualizarMonedero();
+    }
+
+    /**
+     * Resta dinero al jugador
+     * @param {number} cantidad - Cantidad de dinero a restar
+     * @returns {boolean} True si tenía suficiente dinero, False en caso contrario
+     */
+    restarDinero(cantidad) {
+        if (this.dinero >= cantidad) {
+            this.dinero -= cantidad;
+            this.actualizarMonedero();
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Actualiza el monedero en la interfaz
+     */
+    actualizarMonedero() {
+        const monederoElement = document.getElementById('dinero-jugador');
+        if (monederoElement) {
+            monederoElement.textContent = this.dinero;
+        }
+    }
+
+    /**
      * Calcula el ataque total del jugador sumando los bonus de todas las armas en el inventario
      * @returns {number} Ataque total del jugador
      */
     obtenerAtaqueTotal() {
-        return this.inventario
+        const bonusArmas = this.inventario
             .filter(item => item.tipo === 'Arma')
             .reduce((total, arma) => total + arma.bonus, 0);
+        return this.ataqueBase + bonusArmas;
     }
 
     /**
@@ -49,9 +86,10 @@ export class Jugador {
      * @returns {number} Defensa total del jugador
      */
     obtenerDefensaTotal() {
-        return this.inventario
+        const bonusArmaduras = this.inventario
             .filter(item => item.tipo === 'Armadura')
             .reduce((total, armadura) => total + armadura.bonus, 0);
+        return this.defensaBase + bonusArmaduras;
     }
 
     /**
@@ -63,5 +101,18 @@ export class Jugador {
             .filter(item => item.tipo === 'Consumible')
             .reduce((total, consumible) => total + consumible.bonus, 0);
         return this.vidaMaxima + bonusVida;
+    }
+
+    /**
+     * Obtiene los datos del jugador para guardar en el ranking
+     * @returns {Object} Datos del jugador
+     */
+    obtenerDatosParaRanking() {
+        return {
+            nombre: this.nombre,
+            puntuacion: this.puntos,
+            monedas: this.dinero,
+            fecha: new Date().toLocaleDateString('es-ES')
+        };
     }
 }
