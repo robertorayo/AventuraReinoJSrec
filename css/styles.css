@@ -441,6 +441,94 @@ body {
     }
 }
 
+/* ========== BOTÓN TOP SECRET ! ==============*/
+.panel-secreto {
+    position: fixed;
+    right: 20px;
+    bottom: -100px;
+    width: 130px;
+    height: 200px;
+    border: 2px solid var(--color-accent);
+    border-bottom: none;
+    border-radius: 10px 10px 0 0;
+    transition: bottom 0.5s ease;
+    padding: 20px;
+    font-family: 'Cinzel', serif;
+    background: var(--color-secondary);
+}
+
+.panel-secreto:hover {
+    bottom: 0;
+}
+
+.panel-secreto h2 {
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.panel-secreto p {
+    text-align: center;
+}
+
+/* ================ ESTRELLAS ===================*/
+.estrellas {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    gap: 15px;
+    padding: 10px;
+    background: var(--color-secondary-dark);
+    border-radius: 10px;
+    border: 1px solid var(--color-border);
+}
+
+.estrella {
+    width: 40px;
+    height: 40px;
+    clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%,
+            50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+    animation: girar 5s linear infinite;
+}
+
+.estrella:nth-child(1) {
+    animation: girar 5s linear infinite;
+    background-color: var(--color-accent);
+}
+
+.estrella:nth-child(2) {
+    animation: girar 5s linear infinite;
+    background-color: var(--color-accent);
+}
+
+.estrella:nth-child(3) {
+    animation: girar 5s linear infinite;
+    background-color: var(--color-accent);
+}
+
+.estrella:nth-child(4) {
+    animation: girar 5s linear infinite;
+    background-color: var(--color-accent);
+}
+
+.estrella:nth-child(5) {
+    animation: girar 5s linear infinite;
+    background-color: var(--color-accent);
+}
+
+@keyframes girar {
+    from {
+        transform: rotate(0deg);
+    }
+
+    50% {
+        transform: rotate(180deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
 
 /* ========== CREACIÓN DEL PERSONAJE ========== */
 .creacion-personaje {
